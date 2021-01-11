@@ -9,7 +9,6 @@ GetInventorySlotNum(xSlot, ySlot) {
 }
 
 CheckIfEmptyNeeded() {
-    ;[1, 3]
     emptyNeeded := False
     slotX := inventorySlotToFull[1]
     slotY := inventorySlotToFull[2]
