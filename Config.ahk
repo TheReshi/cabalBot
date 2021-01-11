@@ -65,7 +65,7 @@ global whiteSockIcon := ["items\misc", "whitesock2.png"]
 ;==================================================
 global imgPath := % A_ScriptDir . "\resources\imgs\"
 
-
+/*
 ;Multi-monitor support
 ;==================================================
 xDiff := -1920
@@ -90,3 +90,4 @@ For key, area in singleCoordsToConvert {
     area[2] += yDiff
     OutputDebug, % key . ". after: " . area[1] . ", " . area[2]
 }
+*/

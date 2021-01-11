@@ -18,6 +18,7 @@ return
 
 PgUp::
 ActivateCabal()
+OpenWarehouse()
 CloseWarehouse()
 OpenInventory()
 CloseInventory()
