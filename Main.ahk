@@ -2,13 +2,18 @@
 #Include, Actions.ahk
 SetWorkingDir, %A_ScriptDir%
 SendMode, Event
-SetKeyDelay, 25, 25
+SetKeyDelay, 50, 30
 SetMouseDelay, 50
 SetDefaultMouseSpeed, 0
 
 Home::
 ActivateCabal()
-CheckInventorySlots()
+CheckIfEmptyNeeded()
+return
+
+End::
+ActivateCabal()
+ClearInventory()
 return
 
 PgUp::
@@ -21,7 +26,9 @@ CloseShop()
 CloseAllNotificatons()
 CloseAllPopUps()
 OpenInventory()
-CheckInventorySlots()
+ClearInventory()
+ExitApp
+return
 
 
 PgDn::
