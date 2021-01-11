@@ -51,28 +51,6 @@ TempInventoryReceiveAllExists() {
     return ObjectExists(tempInventoryButtonArea, ImgPathToString(receiveTempInventoryButtonIcon[1], receiveTempInventoryButtonIcon[2]))
 }
 
-OpenWhiteSocks() {
-    inventoryStartCoord := GetInventorySlotCoord(1, 1, 0)
-    inventoryEndCoord := GetInventorySlotCoord(8, 8, 2)
-    currentInventoryTab := 1
-    Loop, % inventoryTabsToUse {
-        SelectInventoryTab(currentInventoryTab)
-        Sleep, 1000
-        OutputDebug, % ImgExists([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2]))
-        OutputDebug, % inventoryStartCoord[1] ", " inventoryStartCoord[2] " | " inventoryEndCoord[1] ", " inventoryEndCoord[2]
-        OutputDebug, % ImgPathToString(whiteSockIcon[1], whiteSockIcon[2])
-        While ImgExists([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2])) {
-            socksCoords := GetImgCoords([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2]), 0)
-            MouseClick, Right, socksCoords[1], socksCoords[2], 1, 0
-            WaitExtra()
-            SelectInventoryTab(currentInventoryTab)
-        }
-        currentInventoryTab++
-    }
-    ReceiveTempInventory()
-    CloseTempInventory()
-}
-
 StoreItems(inventoryTab, slotCoord) {
     OpenInventory()
     OpenWarehouse()
