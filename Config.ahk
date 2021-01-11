@@ -76,13 +76,17 @@ doubleCoordsToConvert := [inventoryTitleArea, shopTitleArea, warehouseTitleArea,
 singleCoordsToConvert := [inventoryTabCoord, inventorySlotCoord]
 
 For key, area in doubleCoordsToConvert {
-    area[1][1] -= xDiff
-    area[1][2] -= yDiff
-    area[2][1] -= xDiff
-    area[2][2] -= yDiff
+    OutputDebug, % key . ". before: " . area[1][1] . ", " . area[1][2] . " - " . area[2][1] . ", " . area[2][2]
+    area[1][1] += xDiff
+    area[1][2] += yDiff
+    area[2][1] += xDiff
+    area[2][2] += yDiff
+    OutputDebug, % key . ". after: " . area[1][1] . ", " . area[1][2] . " - " . area[2][1] . ", " . area[2][2]
 }
 
 For key, area in singleCoordsToConvert {
-    area[1][1] -= xDiff
-    area[1][2] -= yDiff
+    OutputDebug, % key . ". before: " . area[1] . ", " . area[2]
+    area[1] += xDiff
+    area[2] += yDiff
+    OutputDebug, % key . ". after: " . area[1] . ", " . area[2]
 }
