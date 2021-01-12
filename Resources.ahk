@@ -4,11 +4,86 @@ SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
 CoordMode, Pixel, Client
 
+
+
+SendKey(key, state) {
+    keyified := state ? "{" . key . " " . state . "}" : "{" . key . "}"
+    Send, % keyified
+}
+
+LootWhileMoving(lootTime) {
+    currentTime := A_TickCount
+    While (A_TickCount < currentTime + lootTime) {
+        Loot()
+    }
+}
+
+MoveAround() {
+    goldenRule := 500
+    SendKey(forwardKey, "down")
+    LootWhileMoving(goldenRule * 1.385)
+    SendKey(forwardKey, "up")
+    SendKey(rightKey, "down")
+    LootWhileMoving(goldenRule * 1.37)
+    SendKey(rightKey, "up")
+    SendKey(backwardKey, "down")
+    LootWhileMoving(goldenRule * 5.85)
+    SendKey(backwardKey, "up")
+    SendKey(leftKey, "down")
+    LootWhileMoving(goldenRule * 3.2)
+    SendKey(leftKey, "up")
+    SendKey(forwardKey, "down")
+    LootWhileMoving(goldenRule * 3.2)
+    SendKey(forwardKey, "up")
+    SendKey(rightKey, "down")
+    LootWhileMoving(goldenRule * 1.4)
+    SendKey(rightKey, "up")
+    SendKey(backwardKey, "down")
+    LootWhileMoving(goldenRule * 2.55)
+    SendKey(backwardKey, "up") 
+}
+
+Loot() {
+    Send, % lootKey
+}
+
+DoNormalAttack() {
+    if (A_TickCount > lastNormalAttack + normalAttackCooldown) {
+        lastNormalAttack := A_TickCount
+        ChangeTarget()
+        Send, % normalAttackKey
+    }
+}
+
+ChangeTarget() {
+    Send, % changeTargetKey
+    WaitExtra()
+    FocusTarget()
+}
+
+FocusTarget() {
+    enemyState := EnemyExists()
+    ;OutputDebug, % enemyState
+    If !enemyState {
+        ChangeTarget()
+    }
+}
+
+EnemyExists() {
+        PixelSearch, FoundX, FoundY, enemyHealthArea[1][1], enemyHealthArea[1][2], enemyHealthArea[2][1], enemyHealthArea[2][2], enemyHealthBarColor, 0, Fast RGB
+        If (ErrorLevel) {
+            return False
+        }
+        ;OutputDebug, % "Yes"
+        return True
+}
+
 GetInventorySlotNum(xSlot, ySlot) {
     return xSlot + (ySlot - 1) * 8
 }
 
 CheckIfEmptyNeeded() {
+    SelectInventoryTab(inventoryTabsToUse)
     emptyNeeded := False
     slotX := inventorySlotToFull[1]
     slotY := inventorySlotToFull[2]
@@ -16,7 +91,7 @@ CheckIfEmptyNeeded() {
         Loop, % 9 - slotY {
             slotNum := GetInventorySlotNum(slotX, slotY)
             emptyNeeded := emptyNeeded Or !ObjectExists([GetInventorySlotCoord(slotX, slotY, 0), GetInventorySlotCoord(slotX, slotY, 2)], ImgPathToString("inventory", slotNum . ".png"), 50)
-            OutputDebug, % slotX ", " slotY
+            ;OutputDebug, % slotX ", " slotY
             if emptyNeeded {
                 return True
             }
@@ -43,24 +118,32 @@ ReceiveTempInventory() {
 }
 
 TempInventoryCloseExists() {
+    ;OutputDebug, % "Exists tempinv close!"
     return ObjectExists(tempInventoryButtonArea, ImgPathToString(closeTempInventoryButtonIcon[1], closeTempInventoryButtonIcon[2]))
 }
 
 TempInventoryReceiveAllExists() {
+    ;OutputDebug, % "Exists tempinv receive!"
     return ObjectExists(tempInventoryButtonArea, ImgPathToString(receiveTempInventoryButtonIcon[1], receiveTempInventoryButtonIcon[2]))
 }
 
 StoreItems(inventoryTab, slotCoord) {
+    xSlot := Round((slotCoord[1] - inventorySlotCoord[1]) / inventorySlotSize)
+    ySlot := Round((slotCoord[2] - inventorySlotCoord[2]) / inventorySlotSize)
     OpenInventory()
     OpenWarehouse()
     SelectInventoryTab(inventoryTab)
     Send, {Alt down}
     MouseClick, Left, slotCoord[1], slotCoord[2], 1, 0
     Send, {Alt up}
-    itemStoreState := ItemStoreExists()
-    While !itemStoreState {
+    slotState := ObjectExists([GetInventorySlotCoord(xSlot, ySlot, 0), GetInventorySlotCoord(xSlot, ySlot, 2)], ImgPathToString("inventory", xSlot + (ySlot - 1) * 8 . ".png"), 50)
+    if !slotState {
+        itemStoreState := ItemStoreExists()
+        While !itemStoreState {
         StoreItems(inventoryTab, slotCoord)
         itemStoreState := ItemStoreExists()
+        }
+        Send, {9}{9}{9}
     }
     MultipleStore()
 }
@@ -90,15 +173,20 @@ MultipleStore() {
 }
 
 SellItems(slotCoord) {
+    xSlot := Round((slotCoord[1] - inventorySlotCoord[1]) / inventorySlotSize)
+    ySlot := Round((slotCoord[2] - inventorySlotCoord[2]) / inventorySlotSize)
     OpenInventory()
     OpenShop()
     Send, {Alt down}
     MouseClick, Left, slotCoord[1], slotCoord[2], 1, 0
     Send, {Alt up}
-    itemSaleState := ItemSaleExists()
-    While !itemSaleState {
-        SellItems(slotCoord)
+    slotState := ObjectExists([GetInventorySlotCoord(xSlot, ySlot, 0), GetInventorySlotCoord(xSlot, ySlot, 2)], ImgPathToString("inventory", xSlot + (ySlot - 1) * 8 . ".png"), 50)
+    if !slotState {
         itemSaleState := ItemSaleExists()
+        While !itemSaleState {
+            SellItems(slotCoord)
+            itemSaleState := ItemSaleExists()
+        }
     }
     MultipleStore()
 }
@@ -114,10 +202,10 @@ DecideChatItem() {
     }
     CloseChat()
     if itemIsGood {
-        OutputDebug, % "Good, keep! (" . A_LoopFileName . ")"
+        ;OutputDebug, % "Good, keep! (" . A_LoopFileName . ")"
         return True
     }
-    OutputDebug, % "Nope, sell. (" . A_LoopFileName . ")"
+    ;OutputDebug, % "Nope, sell. (" . A_LoopFileName . ")"
     return False
 }
 
@@ -170,7 +258,7 @@ GetInventoryTabCoord(inventoryTab) {
 CloseChat() {
     chatState := ChatExists()
     While chatState {
-        Send, {Escape}
+        Send, closePaneKey
         chatState := ChatExists()
     }
 }
@@ -296,7 +384,7 @@ ActivateCabal() {
 }
 
 WaitExtra(extraWait := 0) {
-    if (extraWait = 0) {
+    if (extraWait == 0) {
         Sleep, % extraTime
     } else {
         Sleep, % extraWait
@@ -305,4 +393,44 @@ WaitExtra(extraWait := 0) {
 
 ImgPathToString(folder, imgName) {
     return imgPath . folder . "\" . imgName
+}
+
+DebugParams(params := -1) {
+    if (params != -1) {
+        ;OutputDebug, % StrngifyParams(params)
+    }
+}
+
+StrngifyParams(params := -1) {
+    result := ""
+    if (params != -1) {
+        if (params.Length() > 1) {
+            For i, item in params {
+                result .= "Param" . i . ": "
+                if (item.Length() > 1) {
+                    result .= "["
+                    For j, elem in item {
+                        if (elem.Length() > 1) {
+                            result .= "["
+                            For k, element in elem {
+                                result .= element . ", "
+                            }
+                            result := RegExReplace(result, ", $", "")
+                            result .= "], "
+                        } else {
+                            result .= elem . ", "
+                        }
+                    }
+                    result := RegExReplace(result, ", $", "")
+                    result .= "], "
+                } else {
+                    result .= item . ", "
+                }
+            }
+        } else {
+            OutputDebug, % params
+        }
+    }
+    result := RegExReplace(result, ", $")
+    return result
 }

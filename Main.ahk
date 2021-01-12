@@ -2,37 +2,39 @@
 #Include, Actions.ahk
 SetWorkingDir, %A_ScriptDir%
 SendMode, Event
-SetKeyDelay, 50, 30
-SetMouseDelay, 50
+SetKeyDelay, %keyDelay%, %pressDuration%
+SetMouseDelay, %mouseDelay%
 SetDefaultMouseSpeed, 0
+
+PgDn::
+Pause
+return
 
 Home::
 ActivateCabal()
-CheckIfEmptyNeeded()
+AFKFight()
 return
 
 End::
 ActivateCabal()
-ClearInventory()
+Fight()
 return
 
 PgUp::
+CloseAllNotificatons()
+CloseAllPopUps()
 ActivateCabal()
 OpenWarehouse()
 CloseWarehouse()
 OpenInventory()
 CloseInventory()
-OpenShop()
+OpenShop(),
 CloseShop()
-CloseAllNotificatons()
-CloseAllPopUps()
 OpenInventory()
-ClearInventory()
-ExitApp
-return
-
-
-PgDn::
+if CheckIfEmptyNeeded() {
+    OpenWhiteSocks()
+    ClearInventory()
+}
 ExitApp
 return
 

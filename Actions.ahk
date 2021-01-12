@@ -3,6 +3,29 @@
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 
+AFKFight() {
+    Loop {
+            if (A_TickCount > lastNormalAttack + normalAttackCooldown) {
+                WinGet, lastActive,, A
+                OutputDebug, % lastActive
+                WinActivate, Cabal
+                WinActivate, Cabal
+                lastNormalAttack := A_TickCount
+                ChangeTarget()
+                Send, % normalAttackKey
+                WinActivate ahk_id %lastActive%
+                WinActivate ahk_id %lastActive%
+        }
+    }
+}
+
+Fight() {
+    Loop {
+        FocusTarget()
+        DoNormalAttack()
+        Loot()
+    }
+}
 
 ClearInventory() {
     OpenInventory()
@@ -36,9 +59,9 @@ OpenWhiteSocks() {
     Loop, % inventoryTabsToUse {
         SelectInventoryTab(currentInventoryTab)
         Sleep, 1000
-        OutputDebug, % ImgExists([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2]))
-        OutputDebug, % inventoryStartCoord[1] ", " inventoryStartCoord[2] " | " inventoryEndCoord[1] ", " inventoryEndCoord[2]
-        OutputDebug, % ImgPathToString(whiteSockIcon[1], whiteSockIcon[2])
+        ;OutputDebug, % ImgExists([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2]))
+        ;OutputDebug, % inventoryStartCoord[1] ", " inventoryStartCoord[2] " | " inventoryEndCoord[1] ", " inventoryEndCoord[2]
+        ;OutputDebug, % ImgPathToString(whiteSockIcon[1], whiteSockIcon[2])
         While ImgExists([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2])) {
             socksCoords := GetImgCoords([inventoryStartCoord, inventoryEndCoord], 70, ImgPathToString(whiteSockIcon[1], whiteSockIcon[2]), 0)
             MouseClick, Right, socksCoords[1], socksCoords[2], 1, 0

@@ -7,7 +7,10 @@ CoordMode, Pixel, Client
 ;Globals
 ;==================================================
 global secureLoops := 3
-global extraTime := 50
+global extraTime := 75
+global keyDelay := 60
+global pressDuration := 40
+global mouseDelay := 60
 
 
 ;Areas
@@ -21,14 +24,33 @@ global popUpArea := [[1885, 300], [1920, 830]]
 global massMoveArea := [[740, 400], [1175, 440]]
 global moveButtonArea := [[895, 580], [1030, 650]]
 global tempInventoryButtonArea := [[890, 710], [1200, 755]]
+global enemyHealthArea := [[790, 21], [790, 21]]
 
 
 ;Keys
 ;==================================================
+global forwardKey := "w"
+global backwardKey := "s"
+global leftKey := "a"
+global rightKey := "d"
 global inventoryKey := "{i}"
 global remoteShopKey := "{n}"
 global closePaneKey := "{Escape}"
+global changeTargetKey := "{Tab}"
+global normalAttackKey := "{3}"
+global lootKey := "{Space}"
 
+
+;Combat
+;==================================================
+global enemyHealthBarColor := 0xFFDE94 ;0xFFC235
+global normalAttackCooldown := 5900
+
+
+;Combat timers
+;==================================================
+global lastNormalAttack := 0
+global lastLoot := 0
 
 ;Inventory
 ;==================================================
