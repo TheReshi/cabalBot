@@ -16,7 +16,6 @@ Put script anywhere then run it as admin<br>
 <br>
 TODO<br>
 ==================================================<br>
-<br>
 - Make normal combat script<br>
 - Make BM3 combat script<br>
 - Run around while looting<br>
