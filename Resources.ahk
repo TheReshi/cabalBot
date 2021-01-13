@@ -4,7 +4,27 @@ SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
 CoordMode, Pixel, Client
 
+GetLootTimer() {
+    secsUntilLoot := Ceil((lootTimer - A_TickCount) / 1000)
+    if (secsUntilLoot > 0) {
+        minutes := Floor(secsUntilLoot / 60)
+        seconds := Mod(secsUntilLoot, 60)
+        return "Next loot: " minutes " minutes " seconds " seconds"
+        OutputDebug, % "Next loot: %minutes% minutes %seconds% seconds"
+    }
+    return "Next loot: Looting soon!"
+    OutputDebug, % "Next loot: Looting soon!"
+}
 
+ClearTarget() {
+    While EnemyExists() {
+        Send, % closePaneKey
+    }
+}
+
+TimeToLoot() {
+    return A_TickCount > lootTimer + lootDelay
+}
 
 SendKey(key, state) {
     keyified := state ? "{" . key . " " . state . "}" : "{" . key . "}"
@@ -18,7 +38,7 @@ LootWhileMoving(lootTime) {
     }
 }
 
-MoveAround() {
+LootAround() {
     goldenRule := 500
     SendKey(forwardKey, "down")
     LootWhileMoving(goldenRule * 1.385)
@@ -258,7 +278,7 @@ GetInventoryTabCoord(inventoryTab) {
 CloseChat() {
     chatState := ChatExists()
     While chatState {
-        Send, closePaneKey
+        Send, % closePaneKey
         chatState := ChatExists()
     }
 }

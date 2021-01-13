@@ -11,6 +11,7 @@ global extraTime := 75
 global keyDelay := 60
 global pressDuration := 40
 global mouseDelay := 60
+global lootDelay := 180000
 
 
 ;Areas
@@ -50,7 +51,7 @@ global normalAttackCooldown := 5900
 ;Combat timers
 ;==================================================
 global lastNormalAttack := 0
-global lastLoot := 0
+global lootTimer := A_TickCount + lootDelay
 
 ;Inventory
 ;==================================================

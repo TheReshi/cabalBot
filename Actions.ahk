@@ -21,6 +21,18 @@ AFKFight() {
 
 Fight() {
     Loop {
+        if TimeToLoot() {
+            lootTimer := A_TickCount + lootTimer
+            ClearTarget()
+            WaitExtra(5000)
+            LootAround()
+            if CheckIfEmptyNeeded() {
+                CloseAllNotificatons()
+                CloseAllPopUps()
+                OpenWhiteSocks()
+                ClearInventory()
+            }
+        }
         FocusTarget()
         DoNormalAttack()
         Loot()
