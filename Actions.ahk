@@ -24,7 +24,7 @@ Fight() {
         if TimeToLoot() {
             lootTimer := A_TickCount + lootDelay
             ClearTarget()
-            WaitExtra(5000)
+            WaitExtra(5100)
             LootAround()
             if CheckIfEmptyNeeded() {
                 CloseAllNotificatons()

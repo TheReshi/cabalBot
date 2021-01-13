@@ -9,7 +9,7 @@ GetLootTimer() {
     if (secsUntilLoot > 0) {
         minutes := Floor(secsUntilLoot / 60)
         seconds := Mod(secsUntilLoot, 60)
-        return "Next loot: " minutes " minutes " seconds " seconds"
+        return "Next loot: " minutes " minutes " seconds " seconds!"
         OutputDebug, % "Next loot: %minutes% minutes %seconds% seconds"
     }
     return "Next loot: Looting soon!"

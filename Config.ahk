@@ -10,7 +10,7 @@ global secureLoops := 3
 global extraTime := 75
 global keyDelay := 60
 global pressDuration := 40
-global mouseDelay := 60
+global mouseDelay := 50
 global lootDelay := 180000
 
 

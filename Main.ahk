@@ -33,6 +33,7 @@ return
 
 Home::
 ActivateCabal()
+WinMove, Cabal,, 0, 0, 1936, 1066
 GetLootTimer()
 return
 
