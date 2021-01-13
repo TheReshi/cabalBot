@@ -22,7 +22,7 @@ AFKFight() {
 Fight() {
     Loop {
         if TimeToLoot() {
-            lootTimer := A_TickCount + lootTimer
+            lootTimer := A_TickCount + lootDelay
             ClearTarget()
             WaitExtra(5000)
             LootAround()

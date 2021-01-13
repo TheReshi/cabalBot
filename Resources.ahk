@@ -23,7 +23,7 @@ ClearTarget() {
 }
 
 TimeToLoot() {
-    return A_TickCount > lootTimer + lootDelay
+    return A_TickCount > lootTimer
 }
 
 SendKey(key, state) {
