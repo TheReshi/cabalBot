@@ -12,6 +12,8 @@ global keyDelay := 60
 global pressDuration := 40
 global mouseDelay := 50
 global lootDelay := 180000
+global retargetTries := 0
+global retargetLimit := 30
 
 
 ;Areas
@@ -25,7 +27,7 @@ global popUpArea := [[1885, 300], [1920, 830]]
 global massMoveArea := [[740, 400], [1175, 440]]
 global moveButtonArea := [[895, 580], [1030, 650]]
 global tempInventoryButtonArea := [[890, 710], [1200, 755]]
-global enemyHealthArea := [[790, 21], [790, 21]]
+global enemyHealthArea := [[790, 20], [791, 30]]
 
 
 ;Keys
@@ -40,18 +42,32 @@ global closePaneKey := "{Escape}"
 global changeTargetKey := "{Tab}"
 global normalAttackKey := "{3}"
 global lootKey := "{Space}"
+global bm3Key := "F10"
+global auraKey := "F8"
+global bm3AttackKey := {"A": "F3", "B": "F5"}
+global bm3AttackSpecialKey := "F6"
 
 
 ;Combat
 ;==================================================
 global enemyHealthBarColor := 0xFFDE94 ;0xFFC235
 global normalAttackCooldown := 5900
+global bm3Combos := [["A", "B", "A", "A"], ["B", "A", "A", "B"]]
+global bm3Active := False
+global auraActive := False
+global bm3Duration := 90000
+global auraDuration := 45000
+global bm3AuraCooldown := 31000
+global bm3AttackCooldown := 1300
+global bm3AttackSpecialCooldown := 2000
 
 
 ;Combat timers
 ;==================================================
 global lastNormalAttack := 0
-global lootTimer := A_TickCount + lootDelay
+global lootTimer := 0
+global bm3Timer := 0
+global auraTimer := 0
 
 ;Inventory
 ;==================================================

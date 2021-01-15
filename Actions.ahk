@@ -19,7 +19,18 @@ AFKFight() {
     }
 }
 
+FightBaldus() {
+    lootTimer := A_TickCount + lootDelay
+    Loop {
+         if !IsBM3OnCooldown() {
+            AttackBM3()
+        }
+        DoNormalAttack()
+    }
+}
+
 Fight() {
+    lootTimer := A_TickCount + lootDelay
     Loop {
         if TimeToLoot() {
             lootTimer := A_TickCount + lootDelay
@@ -33,9 +44,11 @@ Fight() {
                 ClearInventory()
             }
         }
-        FocusTarget()
+         if !IsBM3OnCooldown() {
+            AttackBM3()
+        }
+        
         DoNormalAttack()
-        Loot()
     }
 }
 
@@ -62,6 +75,7 @@ ClearInventory() {
             ySlot := 8
         }
     }
+    lootTimer := A_TickCount + lootDelay
 }
 
 OpenWhiteSocks() {

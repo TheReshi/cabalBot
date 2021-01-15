@@ -4,16 +4,62 @@ SetWorkingDir, %A_ScriptDir%
 CoordMode, Mouse, Client
 CoordMode, Pixel, Client
 
-GetLootTimer() {
-    secsUntilLoot := Ceil((lootTimer - A_TickCount) / 1000)
+GetTimer(timerType) {
+    secsUntilLoot := Ceil((timerType - A_TickCount) / 1000)
     if (secsUntilLoot > 0) {
         minutes := Floor(secsUntilLoot / 60)
         seconds := Mod(secsUntilLoot, 60)
-        return "Next loot: " minutes " minutes " seconds " seconds!"
-        OutputDebug, % "Next loot: %minutes% minutes %seconds% seconds"
+        return minutes . "m " . seconds "s"
     }
-    return "Next loot: Looting soon!"
-    OutputDebug, % "Next loot: Looting soon!"
+    return "Ready"
+}
+
+IsBM3OnCooldown() {
+    return A_TickCount < bm3Timer
+}
+
+ActivateBM3() {
+    SendKey(bm3Key)
+    bm3Active := True
+    bm3Timer := A_TickCount + bm3Duration
+    WaitExtra(2100)
+}
+
+ActivateAura() {
+    SendKey(auraKey)
+    auraActive := True
+    bm3Active := False
+    auraTimer := (bm3Timer - A_TickCount) / 2 + A_TickCount + auraDuration
+    bm3Timer := auraTimer + bm3AuraCooldown
+    WaitExtra(2100)
+}
+
+AttackBM3() {
+    ActivateBM3()
+    While bm3Active Or auraActive {
+        For i, comboSequence in bm3Combos {
+            For j, comboKey in comboSequence {
+                if (bm3Timer - A_TickCount < 5000 And !auraActive) {
+                    ActivateAura()
+                } else if (auraActive And A_TickCount > auraTimer) {
+                    auraActive := False
+                    auraTimer := bm3Timer
+                }
+                if (bm3Active Or auraActive) {
+                    ChangeTarget()
+                    FocusTarget()
+                    SendKey(bm3AttackKey[comboKey])
+                    WaitExtra(bm3AttackCooldown)
+                    Loot()
+                } else {
+                    break
+                }
+            }
+            FocusTarget()
+            SendKey(bm3AttackSpecialKey)
+            WaitExtra(bm3AttackSpecialCooldown)
+        }
+    }
 }
 
 ClearTarget() {
@@ -26,8 +72,8 @@ TimeToLoot() {
     return A_TickCount > lootTimer
 }
 
-SendKey(key, state) {
-    keyified := state ? "{" . key . " " . state . "}" : "{" . key . "}"
+SendKey(key, state := "") {
+    keyified := (state != "") ? "{" . key . " " . state . "}" : "{" . key . "}"
     Send, % keyified
 }
 
@@ -39,7 +85,7 @@ LootWhileMoving(lootTime) {
 }
 
 LootAround() {
-    goldenRule := 500
+    goldenRule := 600
     SendKey(forwardKey, "down")
     LootWhileMoving(goldenRule * 1.385)
     SendKey(forwardKey, "up")
@@ -68,14 +114,20 @@ Loot() {
 }
 
 DoNormalAttack() {
+    FocusTarget()
     if (A_TickCount > lastNormalAttack + normalAttackCooldown) {
         lastNormalAttack := A_TickCount
         ChangeTarget()
         Send, % normalAttackKey
     }
+    Loot()
 }
 
 ChangeTarget() {
+    if (retargetTries >= retargetLimit) {
+        retargetTries := 0
+        WaitExtra(5000)
+    }
     Send, % changeTargetKey
     WaitExtra()
     FocusTarget()
@@ -85,8 +137,10 @@ FocusTarget() {
     enemyState := EnemyExists()
     ;OutputDebug, % enemyState
     If !enemyState {
+        retargetTries += 1
         ChangeTarget()
     }
+    retargetTries := 0
 }
 
 EnemyExists() {
